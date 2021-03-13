@@ -21,7 +21,7 @@ void setup()
   pinMode(LedPin, OUTPUT);
   pinMode(VRx, INPUT);
   pinMode(VRy, INPUT);
-  Serial.begin(9600);
+  Serial.begin(2000000);
 }
 
 void serialEvent() {

@@ -10,11 +10,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System.Linq;
+
 public class ArduinoCom : MonoBehaviour
 {
 
     public String[] ports;
     SerialPort port;
+    SerialPort testPort;
     bool isConnected = false;
 
     public Dropdown dropdownList;
@@ -48,6 +51,17 @@ public class ArduinoCom : MonoBehaviour
             string s = port.ReadLine();
             print(s);
             inputString.Invoke(s);
+        }
+        try
+        {
+            if(testPort.ReadLine() == "Recieved")
+            {
+                FoundAvaliablePort();
+            }
+        }
+        catch
+        {
+
         }
     }
 
@@ -107,6 +121,35 @@ public class ArduinoCom : MonoBehaviour
         dropdownList.ClearOptions();
         dropdownList.AddOptions(options);
     }
+    public void AutoFindAvaliablePort()
+    {
+        foreach(String sPort in ports)
+        {
+            try
+            {
+                testPort = new SerialPort(sPort, serialSettings.baudRate, serialSettings.portParity, serialSettings.dataBits, serialSettings.stopBits);
+                testPort.Open();
+                testPort.Write("Check");
+            }
+            catch
+            {
+
+            }
+        }
+    }
+
+    void FoundAvaliablePort()
+    {
+        string portCOM = port.PortName;
+        testPort.Close();
+        foreach(string sPort in ports)
+        {
+            if(sPort == portCOM && !isConnected)
+            {
+                dropdownList.value = ports.ToList().IndexOf(sPort);
+            }
+        }
+    }
 
     public void SendSerialMessage(string message)
     {
@@ -122,9 +165,8 @@ public class ArduinoCom : MonoBehaviour
 
     [Serializable]
     public class SerialSettings
-    {
-        public string portName = "port";
-        public int baudRate = 38400;
+    { 
+        public int baudRate = 9600;
         public Parity portParity = Parity.None;
         public int dataBits = 8;
         public StopBits stopBits = StopBits.One;
