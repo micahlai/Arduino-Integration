@@ -28,7 +28,7 @@ void getCommand()
     digitalWrite(LedPin, HIGH);
   } else if (commandString == "OF") {
     digitalWrite(LedPin, LOW);
-  }else if(commandString == "Check"){
+  } else if (commandString == "Check") {
     Serial.print("Recieved");
   }
 
